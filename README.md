@@ -1,70 +1,142 @@
-# Getting Started with Create React App
+#  React starter with router, context, axios setup
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+###  Getting Started
 
-## Available Scripts
+```
+$ git clone git@github.com:jimibue/router-context-starter-sp22.git <project-name>
+$ cd  <project-name>
+$ yarn
+$ yarn start
 
-In the project directory, you can run:
+//  git/github: if you want to use github remove origin and
+// create your own repo and added that origin
+$ git remote rm origin
+$ git remote add origin ssh-link
+$ git add .
+$ git commit -m 'init'
+$ git push origin master
 
-### `yarn start`
+``` 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### what is included in this project
+- axios
+- react-router-dom v6
+- data provider skelton
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+#### App.js
+App.js is where the navbar lives where our nested routes or render in 
+the Outlet component
+```javascript
+import { Link, Outlet } from 'react-router-dom';
 
-### `yarn test`
+function App() {
+  return (
+    <div>
+      <h1>Users App</h1>
+      <nav
+        style={{
+          borderBottom:'1px solid'
+        }}
+        >
+          <Link to='/home'>Home</Link> - {' '}
+          <Link to='/about'>About</Link> 
+        </nav>
+        <p>Outlet component here</p>
+        <Outlet />
+    </div>
+  );
+}
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+export default App;
+```
 
-### `yarn build`
+#### DataProvider.js
+DataProvider.js is where we can manage global state for our app, and export
+DataContext to be used in components to get and set this state
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```javascript
+import React, { useState } from "react";
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+// createContext HERE this doing a lot for
+// create Context/Provider, get and set out data
+export const DataContext = React.createContext();
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+const DataProvider = (props) => {
+  const [dataDemo, setDataDemo] = useState('dataDemo from provider');
 
-### `yarn eject`
+  // create an object that will be 'global state'
+  const dataProviderThing = {
+    dataDemo,
+    setDataDemo
+};
+  // return the provider which will wrap my all app
+  return (
+    <DataContext.Provider value={dataProviderThing}>
+      {props.children}
+    </DataContext.Provider>
+  );
+};
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+export default DataProvider;
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+To use this provider we can use the useContext hook and the DataContext obj
+example given below in the Home.js file
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```javascript
+import { useContext } from "react"
+import { DataContext } from "../providers/DataProvider"
+const Home = ()=>{
+    const {dataDemo, dataDemo} = useContext(DataContext)
+    return (
+        <div>
+            <h1>Home Page</h1>
+            <button onClick={()=>setDataDemo('changed in about')}>change</button>
+            <p>demoState: {dataDemo}</p>
+        </div>
+    )
+}
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+export default Home
+```
 
-## Learn More
+#### index.js
+In our index js we wrap our whole App with the DataProvider, this way it well be accessible to all children components.  We also define our routes and which components they render
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```javascript
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import About from "./pages/About";
+import DataProvider from "./providers/DataProvider";
+import Home from "./pages/Home";
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+const NotFound = ()=>{
+  return <p>path not found</p>
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+ReactDOM.render(
+  <DataProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />}>
+          <Route path="/about" element={<About />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  </DataProvider>,
+  document.getElementById("root")
+);
 
-### Analyzing the Bundle Size
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
