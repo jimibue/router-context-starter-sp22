@@ -1,6 +1,11 @@
 #  React starter with router, context, axios setup
+You can clone this and use this as a starting point for HW and Lectures or you can
+just use it as a reference
 
-###  Getting Started
+View live demo [here](https://boring-curran-6ef654.netlify.app).
+
+###  Getting Started: Setup Instructions
+
 
 ```
 $ git clone git@github.com:jimibue/router-context-starter-sp22.git <project-name>
