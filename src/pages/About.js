@@ -5,8 +5,8 @@ const About = ()=>{
     return (
         <div>
             <h1>About Page</h1>
-            <button onClick={()=>setDataDemo('changed in about')}>change</button>
-            <p>demoState: {dataDemo}</p>
+            <button onClick={()=>setDataDemo('dataDemo changed in about')}>Change dataDemo</button>
+            <p>dataDemo: {dataDemo}</p>
         </div>
     )
 }
